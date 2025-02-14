@@ -1,17 +1,19 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Raketa\BackendTestTask\Controller;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Raketa\BackendTestTask\Repository\ProductRepository;
 use Raketa\BackendTestTask\View\ProductsView;
 
 readonly class GetProductsController
 {
     public function __construct(
-        private ProductsView $productsVew
+        private ProductsView $productsVew,
+        private ProductRepository $productRepository,
     ) {
     }
 
@@ -21,15 +23,14 @@ readonly class GetProductsController
 
         $rawRequest = json_decode($request->getBody()->getContents(), true);
 
-        $response->getBody()->write(
-            json_encode(
-                $this->productsVew->toArray($rawRequest['category']),
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-            )
-        );
+        $products = $this->productRepository->getByCategory($rawRequest['category']);
 
-        return $response
-            ->withHeader('Content-Type', 'application/json; charset=utf-8')
-            ->withStatus(200);
+        if (!\count($products)) {
+            return $response->response(404, JsonResponse::ERROR, ['message' => 'Products not found']);
+        }
+
+        $products = $this->productsVew->toArray($products);
+
+        return $response->response(200, JsonResponse::SUCCESS, $products);
     }
 }
