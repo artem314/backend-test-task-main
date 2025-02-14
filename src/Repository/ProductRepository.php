@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Raketa\BackendTestTask\Repository;
 
@@ -16,14 +16,15 @@ class ProductRepository
         $this->connection = $connection;
     }
 
-    public function getByUuid(string $uuid): Product
+    public function getByUuid(string $uuid): ?Product
     {
-        $row = $this->connection->fetchOne(
-            "SELECT * FROM products WHERE uuid = " . $uuid,
+        $row = $this->connection->fetchAssociative(
+            'SELECT * FROM products WHERE is_active = 1 AND uuid = ?',
+            [$uuid],
         );
 
-        if (empty($row)) {
-            throw new Exception('Product not found');
+        if (!$row) {
+            return null;
         }
 
         return $this->make($row);
@@ -34,7 +35,8 @@ class ProductRepository
         return array_map(
             static fn (array $row): Product => $this->make($row),
             $this->connection->fetchAllAssociative(
-                "SELECT id FROM products WHERE is_active = 1 AND category = " . $category,
+                'SELECT * FROM products WHERE is_active = 1 AND category = ?',
+                [$category],
             )
         );
     }
