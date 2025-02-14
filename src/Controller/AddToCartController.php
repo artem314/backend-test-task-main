@@ -19,32 +19,30 @@ readonly class AddToCartController
     ) {
     }
 
-    public function get(RequestInterface $request): ResponseInterface
+    public function add(RequestInterface $request): ResponseInterface
     {
         $rawRequest = json_decode($request->getBody()->getContents(), true);
         $product = $this->productRepository->getByUuid($rawRequest['productUuid']);
 
+        $response = new JsonResponse();
+
+        if (!$product) {
+            return $response->response(404, JsonResponse::ERROR, ['message' => 'Product not found']);
+        }
+
+        $quantity = (int) $rawRequest['quantity'];
+
+        if ($quantity <= 0) {
+            return $response->response(400, JsonResponse::ERROR, ['message' => 'Quantity must be positive']);
+        }
+
         $cart = $this->cartManager->getCart();
         $cart->addItem(new CartItem(
             Uuid::uuid4()->toString(),
-            $product->getUuid(),
-            $product->getPrice(),
-            $rawRequest['quantity'],
+            $quantity,
+            $product,
         ));
 
-        $response = new JsonResponse();
-        $response->getBody()->write(
-            json_encode(
-                [
-                    'status' => 'success',
-                    'cart' => $this->cartView->toArray($cart)
-                ],
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-            )
-        );
-
-        return $response
-            ->withHeader('Content-Type', 'application/json; charset=utf-8')
-            ->withStatus(200);
+        return $response->response(200, JsonResponse::SUCCESS, $this->cartView->toArray($cart));
     }
 }
