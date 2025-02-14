@@ -3,27 +3,26 @@
 namespace Raketa\BackendTestTask\View;
 
 use Raketa\BackendTestTask\Repository\Entity\Product;
-use Raketa\BackendTestTask\Repository\ProductRepository;
 
 readonly class ProductsView
 {
-    public function __construct(
-        private ProductRepository $productRepository
-    ) {
+    public function __construct()
+    {
     }
 
-    public function toArray(string $category): array
+    public function toArray(array $products): array
     {
         return array_map(
             fn (Product $product) => [
-                'id' => $product->getId(),
-                'uuid' => $product->getUuid(),
-                'category' => $product->getCategory(),
+                'id'          => $product->getId(),
+                'uuid'        => $product->getUuid(),
+                'name'        => $product->getName(),
+                'category'    => $product->getCategory(),
                 'description' => $product->getDescription(),
-                'thumbnail' => $product->getThumbnail(),
-                'price' => $product->getPrice(),
+                'thumbnail'   => $product->getThumbnail(),
+                'price'       => CurrencyConverter::convertToMajor($product->getPrice()),
             ],
-            $this->productRepository->getByCategory($category)
+            $products
         );
     }
 }
