@@ -1,8 +1,7 @@
 migrations/schema.init.sql:
 -
 
-- строка 10 `float` изменить на `int` , цену лучше хранить в int (минимальные единицы валюты, напр. копейки, центы и
-  т.д. 1₽ = 100 коп.), это позволит избежать ошибок округления
+- строка 10 `float` изменить на `int` , цену лучше хранить в int (минимальные единицы валюты), это позволит избежать ошибок округления
 
 -Класс src/Controller/JsonResponse.php:
 -
@@ -97,7 +96,6 @@ src/Infrastructure/ConnectorException.php:
 src/Infrastructure/ConnectorFacade.php:
 -
 
-- добавить свойство класса `readonly`
 - добавить обекта класса `src/Infrastructure/Connector.php` как приватное поле и сделать его геттер
 - изменить метод build, неправильный порядок установления соединения и проверки подключения
 
@@ -132,6 +130,8 @@ src/Repository/ProductRepository.php:
 - строка 26 Возвращать `null` если ничего не найдено
 - строка 37 заменить `id` на `*`
 - строка 37 параметр запроса передавать с помощью аргументов, а не конкатенацией строки
+- метод `make()` сделать private
+- `static fn (array $row): Product => $this->make($row)` заменить на `fn (array $row): Product => $this->make($row)`  статичные функции нельзя использовать с `$this`
 
 src/View/CurrencyConverter.php:
 -
@@ -166,7 +166,13 @@ src/View/ProductsView.php:
   - добавить форматирование цены с помощью функции  `CurrencyConverter::convertToMajor`
   - `$this->productRepository->getByCategory($category)` заменить на `$products`
 
-**Дополнительно (то что нужно сделать, но не реализовано)**
+**Общее**
+- нет инструментов анализа качества кода (phpstan ,phpcs)
+- src/Domain/Cart.php переместить в src/Repository/Entity
+- src/Domain/CartItem.php переместить в src/Repository/Entity
+- src/Domain/Customer.php переместить в src/Repository/Entity
+
+**Дополнительно**
 
 - Для получения списка товаров надо добавить пагинацию
 
