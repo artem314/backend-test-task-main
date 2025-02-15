@@ -28,7 +28,7 @@ class UserRepository
         return $this->make($row);
     }
 
-    public function make(array $row): Customer
+    private function make(array $row): Customer
     {
         return new Customer(
             $row['id'],
