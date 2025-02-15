@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Raketa\BackendTestTask\Infrastructure;
 
-readonly class ConnectorFacade
+class ConnectorFacade
 {
     private Connector $connector;
 
