@@ -33,7 +33,7 @@ class ProductRepository
     public function getByCategory(string $category): array
     {
         return array_map(
-            static fn (array $row): Product => $this->make($row),
+            fn (array $row): Product => $this->make($row),
             $this->connection->fetchAllAssociative(
                 'SELECT * FROM products WHERE is_active = 1 AND category = ?',
                 [$category],
@@ -41,7 +41,7 @@ class ProductRepository
         );
     }
 
-    public function make(array $row): Product
+    private function make(array $row): Product
     {
         return new Product(
             $row['id'],
