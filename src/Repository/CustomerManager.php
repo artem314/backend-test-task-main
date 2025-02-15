@@ -9,7 +9,7 @@ use Raketa\BackendTestTask\Infrastructure\Connector;
 use Raketa\BackendTestTask\Infrastructure\ConnectorException;
 use Raketa\BackendTestTask\Infrastructure\ConnectorFacade;
 
-readonly class CustomerManager
+class CustomerManager
 {
     private LoggerInterface $logger;
     private Connector $connector;
