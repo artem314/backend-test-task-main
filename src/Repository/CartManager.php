@@ -10,12 +10,12 @@ use Raketa\BackendTestTask\Infrastructure\ConnectorException;
 use Raketa\BackendTestTask\Infrastructure\ConnectorFacade;
 use Raketa\BackendTestTask\Repository\Entity\Cart;
 
-readonly class CartManager
+class CartManager
 {
     private LoggerInterface $logger;
     private Connector $connector;
 
-    public function __construct(ConnectorFacade $connectorFacade, private CustomerManager $customerManager)
+    public function __construct(ConnectorFacade $connectorFacade, private readonly CustomerManager $customerManager)
     {
         $this->connector = $connectorFacade->getConnector();
     }
