@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Raketa\BackendTestTask\Domain;
-
-use Raketa\BackendTestTask\Repository\Entity\Product;
+namespace Raketa\BackendTestTask\Repository\Entity;
 
 final readonly class CartItem
 {
