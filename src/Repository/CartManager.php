@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Raketa\BackendTestTask\Repository;
 
 use Psr\Log\LoggerInterface;
-use Raketa\BackendTestTask\Domain\Cart;
 use Raketa\BackendTestTask\Infrastructure\Connector;
 use Raketa\BackendTestTask\Infrastructure\ConnectorException;
 use Raketa\BackendTestTask\Infrastructure\ConnectorFacade;
+use Raketa\BackendTestTask\Repository\Entity\Cart;
 
 readonly class CartManager
 {

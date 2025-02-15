@@ -3,7 +3,7 @@
 namespace Raketa\BackendTestTask\Repository;
 
 use Doctrine\DBAL\Connection;
-use Raketa\BackendTestTask\Domain\Customer;
+use Raketa\BackendTestTask\Repository\Entity\Customer;
 
 class UserRepository
 {
