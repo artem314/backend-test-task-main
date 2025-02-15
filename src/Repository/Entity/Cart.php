@@ -1,16 +1,21 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Raketa\BackendTestTask\Domain;
+namespace Raketa\BackendTestTask\Repository\Entity;
 
 final class Cart
 {
+    private string $paymentMethod;
+
+    /**
+     * @var array<CartItem>
+     */
+    private array $items;
+
     public function __construct(
         readonly private string $uuid,
-        readonly private Customer $customer,
-        readonly private string $paymentMethod,
-        private array $items,
+        private ?Customer $customer,
     ) {
     }
 
@@ -19,7 +24,7 @@ final class Cart
         return $this->uuid;
     }
 
-    public function getCustomer(): Customer
+    public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
@@ -37,5 +42,15 @@ final class Cart
     public function addItem(CartItem $item): void
     {
         $this->items[] = $item;
+    }
+
+    public function setPaymentMethod(string $paymentMethod): void
+    {
+        $this->paymentMethod = $paymentMethod;
+    }
+
+    public function setCustomer(?Customer $customer): void
+    {
+        $this->customer = $customer;
     }
 }

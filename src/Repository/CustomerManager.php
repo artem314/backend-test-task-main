@@ -8,15 +8,17 @@ use Psr\Log\LoggerInterface;
 use Raketa\BackendTestTask\Infrastructure\Connector;
 use Raketa\BackendTestTask\Infrastructure\ConnectorException;
 use Raketa\BackendTestTask\Infrastructure\ConnectorFacade;
-use Raketa\BackendTestTask\Repository\Entity\Cart;
 
-class CartManager
+class CustomerManager
 {
     private LoggerInterface $logger;
     private Connector $connector;
 
-    public function __construct(ConnectorFacade $connectorFacade, private readonly CustomerManager $customerManager)
+    private string $userKey;
+
+    public function __construct(ConnectorFacade $connectorFacade, private UserRepository $userRepository)
     {
+        $this->userKey = \sprintf('%s_%s', session_id(), 'user');
         $this->connector = $connectorFacade->getConnector();
     }
 
@@ -25,23 +27,35 @@ class CartManager
         $this->logger = $logger;
     }
 
-    public function saveCart(Cart $cart)
+    public function loadUser(string $identifier)
     {
         try {
-            $this->connector->set(session_id(), $cart);
+            if ($this->connector->has($this->userKey)) {
+                return;
+            }
         } catch (ConnectorException $e) {
             $this->logger->error($e);
+        }
+
+        $user = $this->userRepository->loadByIdentifier($identifier);
+
+        if ($user) {
+            try {
+                $this->connector->set($this->userKey, $user);
+            } catch (ConnectorException $e) {
+                $this->logger->error($e);
+            }
         }
     }
 
-    public function getCart()
+    public function getUser()
     {
         try {
-            return $this->connector->get(session_id());
+            return $this->connector->get($this->userKey);
         } catch (ConnectorException $e) {
             $this->logger->error($e);
         }
 
-        return new Cart(session_id(), $this->customerManager->getUser());
+        return null;
     }
 }
